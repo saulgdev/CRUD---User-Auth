@@ -8,6 +8,14 @@ export const postSchema = object({
   active: z.boolean().default(true),
 });
 
+export const updateSchema = object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  password: z.string().optional(),
+  admin: z.boolean().optional().default(false),
+  active: z.boolean().optional(),
+});
+
 export function formatErrors(errors: any) {
   const result: { [key: string]: string[] } = {};
   for (const error of errors) {

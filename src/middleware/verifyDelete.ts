@@ -13,8 +13,6 @@ export const verifyDelete = async (
 
   const admin: any = await Jwt.decode(token![1]);
 
-  console.log(admin, id);
-
   const queryResult: QueryResult = await client.query({
     text: "SELECT * FROM users WHERE id = $1",
     values: [id],

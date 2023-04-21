@@ -6,6 +6,7 @@ import {
   loginUserService,
   recoverUser,
   softDeleteUser,
+  updateUserService,
 } from "../services/userServices";
 
 const createUser = async (req: Request, res: Response) => {
@@ -38,6 +39,11 @@ const recoverUserSoft = async (req: Request, res: Response) => {
   return res.status(200).json(response);
 };
 
+const updateUser = async (req: Request, res: Response) => {
+  const response = await updateUserService(req.body, req.params.id);
+  return res.status(200).json(response);
+};
+
 export {
   createUser,
   loginUser,
@@ -45,4 +51,5 @@ export {
   getUserProfile,
   softDelete,
   recoverUserSoft,
+  updateUser,
 };

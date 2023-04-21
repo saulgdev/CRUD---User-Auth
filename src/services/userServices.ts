@@ -33,10 +33,13 @@ const loginUserService = async (payload: loginRequest) => {
   const { password, ...user } = queryResult.rows[0];
 
   return {
-    token: Jwt.sign({ admin: user.admin }, process.env.SECRET_KEY!, {
-      expiresIn: 24,
-      subject: user.id,
-    }),
+    token: Jwt.sign(
+      { admin: user.admin, userId: user.id },
+      process.env.SECRET_KEY!,
+      {
+        expiresIn: 24,
+      }
+    ),
   };
 };
 
@@ -52,7 +55,6 @@ const getUserProfileService = async (payload: string) => {
   const token = payload.split(" ");
 
   const user: any = await Jwt.decode(token[1]);
-  console.log(user);
 
   const queryResult: QueryResult = await client.query({
     text: "SELECT * FROM users WHERE id = $1",
@@ -81,6 +83,25 @@ const recoverUser = async (payload: string) => {
   return userUpdated;
 };
 
+const updateUserService = async (payload: any, id: string) => {
+  const queryString = format(
+    "UPDATE users SET(%I) = ROW(%L) WHERE id = $1 RETURNING *",
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryConfig = {
+    text: queryString,
+    values: [id],
+  };
+
+  const queryResult = await client.query(queryConfig);
+
+  const { password, ...userWithoutPass } = queryResult.rows[0];
+
+  return userWithoutPass;
+};
+
 export {
   createUserService,
   loginUserService,
@@ -88,4 +109,5 @@ export {
   getUserProfileService,
   softDeleteUser,
   recoverUser,
+  updateUserService,
 };
